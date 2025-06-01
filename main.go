@@ -24,18 +24,12 @@ func main() {
 		os.Exit(1)
 	}
 	now := time.Now()
-
 	w := when.New(nil)
 	w.Add(en.All...)
 	w.Add(common.All...)
 	t, err := w.Parse(os.Args[1], now)
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
-	}
-	if t == nil {
-		fmt.Printf("unable to parse time!")
+	if err != nil || t == nil {
+		fmt.Println("unable to parse time:", os.Args[1])
 		os.Exit(2)
 	}
 	if now.After(t.Time) {
@@ -48,16 +42,19 @@ func main() {
 		err := beeep.Alert("Reminder ", strings.Join(os.Args[2:], " "), "asserts/information.png")
 		if err != nil {
 			fmt.Println(err)
+			fmt.Println("Failed to show notif:", err)
 			os.Exit(4)
 		}
 	} else {
 		cmd := exec.Command(os.Args[0], os.Args[1:]...)
 		cmd.Env = append(os.Environ(), fmt.Sprintf("%s=%s", markName, markValue))
 		if err := cmd.Start(); err != nil {
-			fmt.Println(err)
+			fmt.Println("Couldn't set backrgoudn process:", err)
 			os.Exit(5)
 		}
+		fmt.Printf("Reminder set for: %s\n", t.Time.Format("2006-01-02 15:04:05"))
 		fmt.Println("Reminder will be displayed after", diff.Round(time.Second))
 		os.Exit(0)
 	}
 }
+
