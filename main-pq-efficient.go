@@ -74,7 +74,7 @@ func main() {
 		i++
 		msgParts := []string{}
 		for i < len(args) {
-			if strings.Contains(args[i], ":") { // next time detected
+			if strings.Contains(args[i], ":") { 
 				break
 			}
 			if args[i] == "-priority" {
